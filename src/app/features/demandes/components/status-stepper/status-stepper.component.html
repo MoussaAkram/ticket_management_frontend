@@ -1,0 +1,26 @@
+<div class="bg-white rounded-lg border border-gray-200 p-5">
+    <div class="mb-4 text-sm text-gray-600">
+      Statut actuel :
+      <span class="font-semibold text-gray-900">
+        {{ labels[currentStatus] }}
+      </span>
+    </div>
+  <!-- Transition buttons -->
+  @if (transitions.length > 0) {
+    <div class="flex flex-wrap gap-2">
+      @for (t of transitions; track t.value) {
+        <button
+          (click)="statusChange.emit(t.value)"
+          class="px-4 py-1.5 rounded-lg text-sm font-medium
+                     transition-colors {{ t.style }}"
+        >
+          {{ t.label }}
+        </button>
+      }
+    </div>
+  } @else {
+    <p class="text-sm text-gray-400">
+      Statut terminal — aucune action disponible.
+    </p>
+  }
+</div>

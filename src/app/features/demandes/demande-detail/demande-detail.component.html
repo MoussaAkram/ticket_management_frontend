@@ -1,0 +1,117 @@
+<div class="min-h-screen bg-gray-50">
+  <main class="max-w-5xl mx-auto px-6 py-8">
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="flex justify-center py-24">
+        <div
+          class="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"
+        ></div>
+      </div>
+    }
+
+    <!-- Error -->
+    @if (error()) {
+      <div
+        class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"
+      >
+        {{ error() }}
+      </div>
+    }
+
+    @if (!isLoading() && demande()) {
+      <!-- Back + actions -->
+      <div class="flex items-center justify-between mb-6">
+        <a
+          routerLink="/demandes"
+          class="text-sm text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1"
+        >
+          ← Demandes
+        </a>
+        <div class="flex gap-2">
+          <a
+            [routerLink]="['/demandes', demande()!.id, 'edit']"
+            class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            Modifier
+          </a>
+          <button
+            (click)="onDelete()"
+            class="px-3 py-1.5 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+          >
+            Supprimer
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left: demande content + audit timeline -->
+        <div class="lg:col-span-2 space-y-5">
+          <!-- Header card -->
+          <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <div class="flex items-start justify-between gap-4 mb-3">
+              <div>
+                <p class="text-xs font-mono text-gray-400 mb-1">
+                  {{ demande()!.reference }}
+                </p>
+                <h1 class="text-lg font-semibold text-gray-900">
+                  {{ demande()!.title }}
+                </h1>
+              </div>
+              <app-status-badge [status]="demande()!.status" />
+            </div>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              {{ demande()!.description }}
+            </p>
+          </div>
+
+          <!-- Meta card -->
+          <div class="bg-white rounded-lg border border-gray-200 p-5">
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p class="text-xs text-gray-400 mb-1">Créé par</p>
+                <p class="font-medium text-gray-700">
+                  {{ demande()!.createdBy.name }}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 mb-1">Assigné à</p>
+                <p class="font-medium text-gray-700">
+                  {{ demande()!.assignedTo?.name ?? "—" }}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 mb-1">Créée le</p>
+                <p class="font-medium text-gray-700">
+                  {{ demande()!.createdAt | date: "dd/MM/yyyy" }}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 mb-1">Mise à jour</p>
+                <p class="font-medium text-gray-700">
+                  {{ demande()!.updatedAt | date: "dd/MM/yyyy à HH:mm" }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Audit timeline -->
+          <div class="bg-white rounded-lg border border-gray-200 p-5">
+            <h2 class="text-sm font-semibold text-gray-700 mb-4">Historique</h2>
+            <app-audit-timeline [logs]="auditLogs()" />
+          </div>
+        </div>
+
+        <!-- Right: status stepper (sticky) -->
+        <div class="lg:col-span-1">
+          <div class="sticky top-6">
+            <h2 class="text-sm font-semibold text-gray-700 mb-3">Actions</h2>
+            <app-status-stepper
+              [currentStatus]="demande()!.status"
+              (statusChange)="onStatusChange($event)"
+            />
+          </div>
+        </div>
+      </div>
+    }
+  </main>
+</div>

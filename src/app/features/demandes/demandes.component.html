@@ -1,0 +1,98 @@
+<div class="min-h-screen bg-gray-50">
+  <main class="max-w-5xl mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-xl font-semibold text-gray-900">Demandes</h1>
+        <p class="text-sm text-gray-400 mt-0.5">
+          {{ pagination()?.total ?? 0 }} demande(s) au total
+        </p>
+      </div>
+      <a
+        routerLink="/demandes/new"
+        class="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+      >
+        + Nouvelle demande
+      </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="mb-5">
+      <app-demande-filters
+        [activeFilter]="activeFilter()"
+        (filterChange)="onFilterChange($event)"
+      />
+    </div>
+
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="flex justify-center py-16">
+        <div
+          class="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"
+        ></div>
+      </div>
+    }
+
+    <!-- Error -->
+    @if (error()) {
+      <div
+        class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"
+      >
+        {{ error() }}
+      </div>
+    }
+
+    <!-- Table -->
+    @if (!isLoading() && !error()) {
+      <app-demande-table
+        [demandes]="demandes()"
+        (onDelete)="onDelete($event)"
+      />
+
+      <!-- Pagination -->
+      @if (pagination() && pagination()!.totalPages > 1) {
+        <div class="flex items-center justify-between mt-5">
+          <!-- Info -->
+          <p class="text-sm text-gray-400">
+            Page {{ pagination()!.page }} sur {{ pagination()!.totalPages }}
+          </p>
+
+          <!-- Controls -->
+          <div class="flex items-center gap-1">
+            <!-- Previous -->
+            <button
+              (click)="goToPage(currentPage() - 1)"
+              [disabled]="currentPage() === 1"
+              class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              ←
+            </button>
+
+            <!-- Page numbers -->
+            @for (page of visiblePages(); track page) {
+              @if (page === -1) {
+                <span class="px-2 text-gray-400 text-sm">...</span>
+              } @else {
+                <button
+                  (click)="goToPage(page)"
+                  [class]="pageButtonClass(page)"
+                >
+                  {{ page }}
+                </button>
+              }
+            }
+
+            <!-- Next -->
+            <button
+              (click)="goToPage(currentPage() + 1)"
+              [disabled]="currentPage() === pagination()!.totalPages"
+              class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              →
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </main>
+</div>

@@ -1,0 +1,108 @@
+<div class="min-h-screen bg-gray-50">
+  <main class="max-w-2xl mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="mb-6">
+      <button
+        (click)="goBack()"
+        class="text-sm text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1 mb-4"
+      >
+        ← Retour
+      </button>
+      <h1 class="text-xl font-semibold text-gray-900">
+        {{ isEditMode ? "Modifier la demande" : "Nouvelle demande" }}
+      </h1>
+    </div>
+
+    <!-- Form -->
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      class="bg-white rounded-lg border border-gray-200 p-6 space-y-5"
+    >
+      <!-- Title -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Titre <span class="text-red-500">*</span>
+        </label>
+        <input
+          formControlName="title"
+          type="text"
+          placeholder="Ex: Demande de matériel informatique"
+          class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          [class.border-red-300]="isInvalid('title')"
+          [class.border-gray-300]="!isInvalid('title')"
+        />
+        @if (isInvalid("title")) {
+          <p class="text-xs text-red-500 mt-1">
+            Le titre est obligatoire (100 caractères max)
+          </p>
+        }
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Description <span class="text-red-500">*</span>
+        </label>
+        <textarea
+          formControlName="description"
+          rows="4"
+          placeholder="Décrivez votre demande..."
+          class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+          [class.border-red-300]="isInvalid('description')"
+          [class.border-gray-300]="!isInvalid('description')"
+        ></textarea>
+        @if (isInvalid("description")) {
+          <p class="text-xs text-red-500 mt-1">
+            La description est obligatoire
+          </p>
+        }
+      </div>
+
+      <!-- Assigned to -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Assigner à
+        </label>
+        <select
+          formControlName="assignedToId"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+        >
+          <option value="">Non assigné</option>
+          @for (user of users(); track user.id) {
+            <option [value]="user.id">{{ user.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Submit error -->
+      @if (submitError()) {
+        <p class="text-sm text-red-500">{{ submitError() }}</p>
+      }
+
+      <!-- Actions -->
+      <div class="flex gap-3 pt-1">
+        <button
+          type="submit"
+          [disabled]="form.invalid || isSubmitting()"
+          class="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{
+            isSubmitting()
+              ? "Enregistrement..."
+              : isEditMode
+                ? "Enregistrer"
+                : "Créer"
+          }}
+        </button>
+        <button
+          type="button"
+          (click)="goBack()"
+          class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+        >
+          Annuler
+        </button>
+      </div>
+    </form>
+  </main>
+</div>

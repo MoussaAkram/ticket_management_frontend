@@ -1,0 +1,62 @@
+<!-- Empty state -->
+@if (demandes.length === 0) {
+  <div class="text-center py-16 text-gray-400">
+    <p class="text-base">Aucune demande trouvée</p>
+    <p class="text-sm mt-1">Créez votre première demande pour commencer</p>
+  </div>
+}
+
+<!-- Table -->
+@if (demandes.length > 0) {
+  <div class="overflow-x-auto rounded-lg border border-gray-200">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 border-b border-gray-200 text-left">
+        <tr>
+          <th class="px-4 py-3 font-medium text-gray-500">Référence</th>
+          <th class="px-4 py-3 font-medium text-gray-500">Titre</th>
+          <th class="px-4 py-3 font-medium text-gray-500">Statut</th>
+          <th class="px-4 py-3 font-medium text-gray-500">Créé par</th>
+          <th class="px-4 py-3 font-medium text-gray-500">Assigné à</th>
+          <th class="px-4 py-3 font-medium text-gray-500">Date</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 bg-white">
+        @for (demande of demandes; track demande.id) {
+          <tr
+            [routerLink]="['/demandes', demande.id]"
+            class="hover:bg-gray-200 transition-colors cursor-pointer group"
+          >
+            <td class="px-4 py-3 font-mono text-xs text-gray-800">
+              {{ demande.reference }}
+            </td>
+            <td class="px-4 py-3 text-gray-800">
+                {{ demande.title }}
+            </td>
+            <td class="px-4 py-3">
+              <app-status-badge [status]="demande.status" />
+            </td>
+            <td class="px-4 py-3 text-gray-800">
+              {{ demande.createdBy.name }}
+            </td>
+            <td class="px-4 py-3 text-gray-800">
+              {{ demande.assignedTo?.name ?? "—" }}
+            </td>
+            <td class="px-4 py-3 text-gray-800 text-xs">
+              {{ demande.createdAt | date: "dd/MM/yyyy" }}
+            </td>
+            <td class="px-4 py-3 text-right">
+              <button
+                (click)="$event.stopPropagation(); onDelete.emit(demande.id)"
+                class="text-gray-500 hover:text-red-500 transition-colors relative z-10"
+                title="Supprimer"
+              >
+                <lucide-icon name="trash2" class="w-4 h-4"></lucide-icon>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

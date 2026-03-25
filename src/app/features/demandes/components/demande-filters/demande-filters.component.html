@@ -1,0 +1,10 @@
+<div class="flex flex-wrap gap-2">
+  @for (chip of chips; track chip.label) {
+    <button
+      (click)="filterChange.emit(chip.value)"
+      [class]="chipClass(chip.value)"
+    >
+      {{ chip.label }}
+    </button>
+  }
+</div>
